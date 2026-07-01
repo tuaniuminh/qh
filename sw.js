@@ -1,31 +1,39 @@
 // ============================================================
-// SERVICE WORKER - MenControl Pro v1.0.3
-// Cache name phải khớp với AppVersion.VERSION trong version.js
-// Mỗi khi tăng version → SW cũ bị xóa → cache mới được tạo
+// SERVICE WORKER - MenControl Pro v1.0.4
+// Dùng đường dẫn TƯƠNG ĐỐI (./...) để hoạt động trên GitHub Pages
 // ============================================================
 
-const VERSION    = '1.0.3';
+const VERSION    = '1.0.4';
 const CACHE_NAME = `mencontrol-v${VERSION}`;
 
+// Dùng đường dẫn tương đối (self.location.pathname lấy base path tự động)
+const BASE = self.registration.scope;
+
 const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './css/style.css',
-  './js/version.js',
-  './js/auth.js',
-  './js/storage.js',
-  './js/kegel-timer.js',
-  './js/simulation.js',
-  './js/app.js',
-  './manifest.json'
+  BASE,
+  BASE + 'index.html',
+  BASE + 'css/style.css',
+  BASE + 'js/version.js',
+  BASE + 'js/auth.js',
+  BASE + 'js/storage.js',
+  BASE + 'js/kegel-timer.js',
+  BASE + 'js/simulation.js',
+  BASE + 'js/app.js',
+  BASE + 'manifest.json',
+  BASE + 'assets/icons/icon-192.png',
+  BASE + 'assets/icons/icon-512.png'
 ];
 
-// ── Install: cache tất cả assets ──
+// ── Install ──
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS_TO_CACHE))
       .then(() => self.skipWaiting())
+      .catch(err => {
+        console.warn('[SW] Cache addAll error (non-fatal):', err);
+        return self.skipWaiting();
+      })
   );
 });
 
@@ -47,32 +55,30 @@ self.addEventListener('activate', event => {
 
 // ── Fetch: Network first, fallback to cache ──
 self.addEventListener('fetch', event => {
-  // Bỏ qua các request không phải GET
   if (event.request.method !== 'GET') return;
 
-  // Bỏ qua cross-origin requests (fonts, APIs...)
   const url = new URL(event.request.url);
+  // Bỏ qua cross-origin (fonts, CDN...)
   if (url.origin !== self.location.origin) return;
 
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Cache lại response mới nhất
         if (response && response.status === 200) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
       })
-      .catch(() => {
-        // Offline: dùng cache
-        return caches.match(event.request)
-          .then(cached => cached || caches.match('./index.html'));
-      })
+      .catch(() =>
+        caches.match(event.request).then(cached =>
+          cached || caches.match(BASE + 'index.html')
+        )
+      )
   );
 });
 
-// ── Message: nhận lệnh skipWaiting từ client ──
+// ── Message ──
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();

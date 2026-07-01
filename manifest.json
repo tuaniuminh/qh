@@ -2,9 +2,10 @@
   "name": "MenControl Pro - Kiểm Soát Hoàn Hảo",
   "short_name": "MenControl",
   "description": "Ứng dụng giáo dục sức khỏe nam giới - Kỹ năng kiểm soát và rèn luyện cơ PC",
-  "start_url": "/index.html",
+  "start_url": "/qh/",
+  "scope": "/qh/",
   "display": "standalone",
-  "background_color": "#0a0a1a",
+  "background_color": "#060612",
   "theme_color": "#6c63ff",
   "orientation": "portrait-primary",
   "categories": ["health", "fitness", "education"],
@@ -14,26 +15,39 @@
       "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "screenshots": [],
   "shortcuts": [
     {
       "name": "Bắt đầu Thực hành",
-      "url": "/index.html#practice",
-      "description": "Mở chế độ mô phỏng thực hành"
+      "url": "/qh/",
+      "description": "Mở chế độ mô phỏng thực hành",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Luyện Kegel",
-      "url": "/index.html#kegel",
-      "description": "Mở timer luyện tập Kegel"
+      "url": "/qh/",
+      "description": "Mở timer luyện tập Kegel",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

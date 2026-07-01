@@ -22,6 +22,11 @@
 
   <title>MenControl Pro - Đăng nhập</title>
 
+  <!-- PWA Icons (iOS + Android) -->
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg" />
+
   <!-- Manifest -->
   <link rel="manifest" href="manifest.json" />
 
@@ -362,9 +367,9 @@
       }, 1600);
     });
 
-    // ── Service Worker ──
+    // ── Service Worker (đường dẫn tương đối để hoạt động trên GitHub Pages) ──
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js').catch(e => console.warn('[SW] register failed:', e));
     }
   </script>
 

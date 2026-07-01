@@ -9,13 +9,24 @@
 // ============================================================
 
 const AppVersion = {
-  VERSION:      '1.0.3',
+  VERSION:      '1.0.4',
   BUILD_DATE:   '2026-07-01',
   CODENAME:     'PRO',
   CACHE_KEY:    'mc_version_seen',
 
   // Lịch sử cập nhật
   CHANGELOG: [
+    {
+      version:  '1.0.4',
+      date:     '2026-07-01',
+      type:     'fix',
+      changes: [
+        '🔧 Sửa lỗi 404 khi mở từ màn hình chính trên GitHub Pages',
+        '📱 Tạo icon PWA (192px + 512px) hiển thị đúng trên màn hình chính',
+        '🌏 Sửa Service Worker dùng đường dẫn tương đối cho GitHub Pages /qh/',
+        '🔗 Cập nhật manifest.json: start_url, scope, apple-touch-icon'
+      ]
+    },
     {
       version:  '1.0.3',
       date:     '2026-07-01',
