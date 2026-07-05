@@ -9,13 +9,25 @@
 // ============================================================
 
 const AppVersion = {
-  VERSION:      '1.0.5',
+  VERSION:      '1.0.6',
   BUILD_DATE:   '2026-07-05',
   CODENAME:     'PRO',
   CACHE_KEY:    'mc_version_seen',
 
   // Lịch sử cập nhật
   CHANGELOG: [
+    {
+      version:  '1.0.6',
+      date:     '2026-07-05',
+      type:     'update',
+      changes: [
+        '👂 Hỗ trợ mở khóa bằng Face ID (iOS) / Vân tay (Android) / Touch ID (Mac)',
+        '⚡ Tự động kích hoạt sinh trắc học ngay khi vào trang',
+        '🔄 Dự phòng mật khẩu khi sinh trắc học thất bại',
+        '⚙️ Quản lý sinh trắc học trong màn hình Cài đặt',
+        '🔐 WebAuthn platform authenticator (không cần server)'
+      ]
+    },
     {
       version:  '1.0.5',
       date:     '2026-07-05',

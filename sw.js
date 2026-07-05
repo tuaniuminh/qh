@@ -3,7 +3,7 @@
 // Dùng đường dẫn TƯƠNG ĐỐI (./...) để hoạt động trên GitHub Pages
 // ============================================================
 
-const VERSION    = '1.0.5';
+const VERSION    = '1.0.6';
 const CACHE_NAME = `mencontrol-v${VERSION}`;
 
 // Dùng đường dẫn tương đối (self.location.pathname lấy base path tự động)
