@@ -1,5 +1,6 @@
 // ============================================================
 // AUTH.JS - Xác thực SHA-256 + WebAuthn (Face ID / Vân tay)
+// v1.0.7
 // ============================================================
 //
 // ⚙️  THAY ĐỔI MẬT KHẨU:
@@ -11,11 +12,12 @@
 
 const AuthSystem = {
 
-  PASSWORD_HASH:  '2a4553ae34d0b9311a051ebbc896b6906d8c49b7034bfb40dfeb4cf24c9e9354',
-  SESSION_KEY:    'mc_auth_ok',
-  REMEMBER_KEY:   'mc_auth_remember',
-  BIOMETRIC_KEY:  'mc_biometric_cred',   // lưu credentialId (base64)
-  REMEMBER_DAYS:  7,
+  PASSWORD_HASH:      '2a4553ae34d0b9311a051ebbc896b6906d8c49b7034bfb40dfeb4cf24c9e9354',
+  SESSION_KEY:        'mc_auth_ok',
+  REMEMBER_KEY:       'mc_auth_remember',
+  BIOMETRIC_KEY:      'mc_biometric_cred',    // credentialId (base64)
+  BIOMETRIC_REQ_KEY:  'mc_biometric_always',  // "1" = yêu cầu mỗi lần mở
+  REMEMBER_DAYS:      7,
 
   // ════════════════════════════════════════
   //  UTILITIES
@@ -30,7 +32,6 @@ const AuthSystem = {
     return (await this.generateHash(pw.trim())) === this.PASSWORD_HASH;
   },
 
-  // ── ArrayBuffer ↔ Base64 helpers ──
   _ab2b64(buf) {
     return btoa(String.fromCharCode(...new Uint8Array(buf)));
   },
@@ -43,7 +44,8 @@ const AuthSystem = {
   //  SESSION
   // ════════════════════════════════════════
 
-  isAuthenticated() {
+  // Có session hợp lệ không?
+  hasValidSession() {
     if (sessionStorage.getItem(this.SESSION_KEY) === '1') return true;
     const until = localStorage.getItem(this.REMEMBER_KEY);
     if (until && Date.now() < parseInt(until, 10)) {
@@ -51,6 +53,16 @@ const AuthSystem = {
       return true;
     }
     return false;
+  },
+
+  // Yêu cầu Face ID mỗi lần không?
+  isBiometricRequired() {
+    return localStorage.getItem(this.BIOMETRIC_REQ_KEY) === '1';
+  },
+
+  setBiometricRequired(val) {
+    if (val) localStorage.setItem(this.BIOMETRIC_REQ_KEY, '1');
+    else      localStorage.removeItem(this.BIOMETRIC_REQ_KEY);
   },
 
   saveSession(remember) {
@@ -61,109 +73,99 @@ const AuthSystem = {
     }
   },
 
-  logout() {
+  clearSession() {
     sessionStorage.removeItem(this.SESSION_KEY);
     localStorage.removeItem(this.REMEMBER_KEY);
+  },
+
+  logout() {
+    this.clearSession();
     location.reload();
   },
 
   // ════════════════════════════════════════
-  //  WEBAUTHN — BIOMETRIC
+  //  WEBAUTHN
   // ════════════════════════════════════════
 
-  // Kiểm tra thiết bị hỗ trợ sinh trắc học không
   async isBiometricAvailable() {
-    if (!window.PublicKeyCredential) return false;
     try {
+      if (!window.PublicKeyCredential) return false;
       return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
     } catch { return false; }
   },
 
-  // Đã đăng ký sinh trắc học chưa
   hasBiometricEnrolled() {
     return !!localStorage.getItem(this.BIOMETRIC_KEY);
   },
 
-  // Tên hiển thị theo thiết bị
   getBiometricLabel() {
     const ua = navigator.userAgent;
-    if (/iPhone|iPad/.test(ua)) return { icon: '󠀠', label: 'Face ID', short: 'Face ID' };
-    if (/Android/.test(ua))      return { icon: '👆', label: 'Vân tay / Khuôn mặt', short: 'Sinh trắc học' };
-    if (/Mac/.test(ua))          return { icon: '👆', label: 'Touch ID', short: 'Touch ID' };
-    return { icon: '🔐', label: 'Sinh trắc học', short: 'Sinh trắc học' };
+    if (/iPhone|iPad/i.test(ua)) return { icon: '🔒', label: 'Face ID',             short: 'Face ID' };
+    if (/Android/i.test(ua))     return { icon: '👆', label: 'Vân tay / Khuôn mặt', short: 'Sinh trắc học' };
+    if (/Mac/i.test(ua))         return { icon: '👆', label: 'Touch ID',             short: 'Touch ID' };
+    return                              { icon: '🔐', label: 'Sinh trắc học',         short: 'Sinh trắc học' };
   },
 
-  // ── ĐĂNG KÝ (sau khi đăng nhập mật khẩu thành công) ──
+  // ── Đăng ký sinh trắc học ──
   async registerBiometric() {
     try {
-      const challenge = crypto.getRandomValues(new Uint8Array(32));
-      const userId    = crypto.getRandomValues(new Uint8Array(16));
-
       const credential = await navigator.credentials.create({
         publicKey: {
-          challenge,
-          rp: {
-            name: 'MenControl Pro',
-            id:   location.hostname   // 'tuaniuminh.github.io' hoặc 'localhost'
-          },
+          challenge: crypto.getRandomValues(new Uint8Array(32)),
+          rp:  { name: 'MenControl Pro', id: location.hostname },
           user: {
-            id:          userId,
-            name:        'user@mencontrol',
+            id: crypto.getRandomValues(new Uint8Array(16)),
+            name: 'user@mencontrol',
             displayName: 'MenControl User'
           },
           pubKeyCredParams: [
-            { type: 'public-key', alg: -7  },  // ES256
-            { type: 'public-key', alg: -257 }  // RS256
+            { type: 'public-key', alg: -7   },  // ES256
+            { type: 'public-key', alg: -257 }   // RS256
           ],
           authenticatorSelection: {
-            authenticatorAttachment: 'platform',  // chỉ Face ID / vân tay máy
+            authenticatorAttachment: 'platform',
             userVerification:        'required',
             residentKey:             'preferred'
           },
           timeout: 60000
         }
       });
-
-      // Lưu credentialId
       localStorage.setItem(this.BIOMETRIC_KEY, this._ab2b64(credential.rawId));
       return true;
     } catch (err) {
-      console.warn('[Auth] Biometric register failed:', err.name, err.message);
+      console.warn('[Auth] Register failed:', err.name);
       return false;
     }
   },
 
-  // ── XÁC THỰC SINH TRẮC HỌC ──
+  // ── Xác thực sinh trắc học ──
   async authenticateBiometric() {
-    const credIdB64 = localStorage.getItem(this.BIOMETRIC_KEY);
-    if (!credIdB64) return false;
-
+    const credB64 = localStorage.getItem(this.BIOMETRIC_KEY);
+    if (!credB64) return false;
     try {
-      const challenge = crypto.getRandomValues(new Uint8Array(32));
-
       const assertion = await navigator.credentials.get({
         publicKey: {
-          challenge,
+          challenge: crypto.getRandomValues(new Uint8Array(32)),
           allowCredentials: [{
             type: 'public-key',
-            id:   this._b642ab(credIdB64),
+            id:   this._b642ab(credB64),
             transports: ['internal']
           }],
           userVerification: 'required',
           timeout: 60000
         }
       });
-
       return !!assertion;
     } catch (err) {
-      console.warn('[Auth] Biometric auth failed:', err.name, err.message);
+      console.warn('[Auth] Auth failed:', err.name);
       return false;
     }
   },
 
-  // Xóa đăng ký sinh trắc học
+  // ── Xóa đăng ký ──
   removeBiometric() {
     localStorage.removeItem(this.BIOMETRIC_KEY);
+    this.setBiometricRequired(false);
   },
 
   // ════════════════════════════════════════
@@ -171,19 +173,31 @@ const AuthSystem = {
   // ════════════════════════════════════════
 
   async init() {
-    if (this.isAuthenticated()) {
-      this.showApp();
-    } else {
+    const enrolled    = this.hasBiometricEnrolled();
+    const bioRequired = this.isBiometricRequired();
+    const hasSession  = this.hasValidSession();
+
+    // Nếu yêu cầu face ID mỗi lần → luôn hiện gate dù có session
+    if (bioRequired && enrolled) {
       await this.showGate();
+      return;
     }
+
+    // Có session hợp lệ → vào thẳng
+    if (hasSession) {
+      this.showApp();
+      return;
+    }
+
+    await this.showGate();
   },
 
   showApp() {
     const gate = document.getElementById('auth-gate');
     const app  = document.getElementById('app');
     if (gate) {
-      gate.style.opacity   = '0';
-      gate.style.transform = 'scale(0.97)';
+      gate.style.opacity    = '0';
+      gate.style.transform  = 'scale(0.97)';
       gate.style.transition = 'all 0.4s ease';
       setTimeout(() => { gate.style.display = 'none'; }, 400);
     }
@@ -208,27 +222,26 @@ const AuthSystem = {
     const gate = document.getElementById('auth-gate');
     if (!gate) return;
     gate.style.display = 'flex';
-    setTimeout(() => { gate.style.opacity='1'; gate.style.transform='scale(1)'; }, 50);
+    setTimeout(() => { gate.style.opacity = '1'; gate.style.transform = 'scale(1)'; }, 50);
 
-    // Kiểm tra biometric song song với render
-    const [bioAvailable] = await Promise.all([this.isBiometricAvailable()]);
-    const bioEnrolled    = this.hasBiometricEnrolled();
-    const bio            = this.getBiometricLabel();
+    // Kiểm tra thiết bị
+    const bioAvailable = await this.isBiometricAvailable();
+    const bioEnrolled  = this.hasBiometricEnrolled();
+    const bio          = this.getBiometricLabel();
 
-    // Render nội dung card
     const card = gate.querySelector('.auth-card');
     if (card) {
       card.innerHTML = this._buildCardHTML(bioAvailable, bioEnrolled, bio);
       this._bindCardEvents(bioAvailable, bioEnrolled, bio);
 
-      // Auto trigger biometric nếu đã đăng ký
+      // Auto-trigger biometric nếu đã đăng ký
       if (bioAvailable && bioEnrolled) {
-        setTimeout(() => this._triggerBiometric(), 400);
+        setTimeout(() => this._triggerBiometric(bio), 600);
       }
     }
   },
 
-  // ── HTML của card ──
+  // ── Build HTML cho card ──
   _buildCardHTML(bioAvailable, bioEnrolled, bio) {
     const showBioFirst = bioAvailable && bioEnrolled;
 
@@ -243,65 +256,59 @@ const AuthSystem = {
       <p class="auth-sub">Xác thực để truy cập ứng dụng</p>
 
       ${showBioFirst ? `
-        <!-- BIOMETRIC PRIMARY -->
         <button class="bio-main-btn" id="auth-bio-btn">
           <span class="bio-main-icon">${bio.icon}</span>
           <span class="bio-main-label">Mở khóa bằng ${bio.label}</span>
-          <span class="bio-main-hint">Chạm để xác thực</span>
+          <span class="bio-main-hint">Chạm để xác thực ngay</span>
         </button>
-
-        <div class="auth-divider" style="margin:18px 0">
+        <div class="auth-divider" style="margin:16px 0 14px">
           <div class="auth-divider-line"></div>
           <div class="auth-divider-text">hoặc dùng mật khẩu</div>
           <div class="auth-divider-line"></div>
+        </div>
+      ` : bioAvailable ? `
+        <div class="bio-available-hint">
+          ${bio.icon} <strong>${bio.label}</strong> khả dụng — <a href="#" id="auth-setup-bio-link">Bật ngay</a>
         </div>
       ` : ''}
 
       <!-- PASSWORD FORM -->
       <form id="auth-form" autocomplete="off" novalidate
-            style="${showBioFirst ? 'display:none' : ''}">
+            ${showBioFirst ? 'style="display:none"' : ''}>
         <div class="auth-field">
           <label class="auth-field-label" for="auth-input">Mật khẩu</label>
           <div class="auth-input-wrap">
             <input type="password" id="auth-input"
                    placeholder="Nhập mật khẩu..."
                    autocomplete="current-password" spellcheck="false"/>
-            <button type="button" id="auth-eye"
-                    title="Hiện/ẩn mật khẩu" aria-label="Toggle password">🙈</button>
+            <button type="button" id="auth-eye" aria-label="Toggle password">🙈</button>
           </div>
         </div>
-
         <div id="auth-error" role="alert"></div>
-
         <label class="auth-remember" for="auth-remember">
           <input type="checkbox" id="auth-remember"/>
           <span class="auth-remember-label">Nhớ tôi trong 7 ngày</span>
         </label>
-
         <button type="submit" id="auth-btn">🔓 Mở khóa</button>
       </form>
 
       ${showBioFirst ? `
-        <button class="auth-toggle-pw" id="auth-toggle-pw">🔑 Dùng mật khẩu</button>
-      ` : (bioAvailable ? `
-        <button class="auth-toggle-pw" id="auth-toggle-pw" style="margin-top:16px">
-          ${bio.icon} Mở khóa bằng ${bio.short}
-        </button>
-      ` : '')}
+        <button class="auth-toggle-pw" id="auth-toggle-pw">🔑 Dùng mật khẩu thay thế</button>
+      ` : ''}
 
-      <div class="auth-divider" style="margin-top:${showBioFirst ? '0' : '20px'}">
+      <div class="auth-divider" style="margin-top:16px">
         <div class="auth-divider-line"></div>
         <div class="auth-divider-text">Chỉ dành cho người được ủy quyền</div>
         <div class="auth-divider-line"></div>
       </div>
       <div class="auth-lock-icon">
         <span>🛡️</span>
-        <span class="auth-lock-text">SHA-256 · WebAuthn · Dữ liệu lưu trên thiết bị</span>
+        <span class="auth-lock-text">SHA-256 · WebAuthn · Dữ liệu trên thiết bị của bạn</span>
       </div>
     `;
   },
 
-  // ── Bind events sau khi render ──
+  // ── Bind events ──
   _bindCardEvents(bioAvailable, bioEnrolled, bio) {
     const form      = document.getElementById('auth-form');
     const input     = document.getElementById('auth-input');
@@ -311,6 +318,7 @@ const AuthSystem = {
     const eyeBtn    = document.getElementById('auth-eye');
     const bioBtn    = document.getElementById('auth-bio-btn');
     const toggleBtn = document.getElementById('auth-toggle-pw');
+    const setupLink = document.getElementById('auth-setup-bio-link');
 
     // Eye toggle
     if (eyeBtn && input) {
@@ -321,7 +329,7 @@ const AuthSystem = {
       });
     }
 
-    // Password input events
+    // Password events
     if (input) {
       input.addEventListener('keydown', e => {
         if (e.key === 'Enter') this._submitPassword(input, remember, btn, errEl);
@@ -330,49 +338,47 @@ const AuthSystem = {
       input.addEventListener('input', () => {
         if (errEl) errEl.style.display = 'none';
       });
-      // Chỉ auto-focus khi biometric không có
       if (!bioEnrolled) setTimeout(() => input.focus(), 300);
     }
 
-    // Submit
     if (btn) btn.addEventListener('click', () => this._submitPassword(input, remember, btn, errEl));
     if (form) form.addEventListener('submit', e => { e.preventDefault(); this._submitPassword(input, remember, btn, errEl); });
 
-    // Biometric button
-    if (bioBtn) bioBtn.addEventListener('click', () => this._triggerBiometric());
+    // Bio button
+    if (bioBtn) bioBtn.addEventListener('click', () => this._triggerBiometric(bio));
 
-    // Toggle show/hide password form
+    // Toggle pw / bio
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
-        const showBioFirst = bioEnrolled && bioAvailable;
-        if (showBioFirst) {
-          // Đang xem bio → toggle sang pw
-          const pwForm = document.getElementById('auth-form');
-          const bioButton = document.getElementById('auth-bio-btn');
-          const isHidden = pwForm.style.display === 'none';
-          if (isHidden) {
-            pwForm.style.display = '';
-            if (bioButton) bioButton.style.display = 'none';
-            toggleBtn.textContent = `${bio.icon} Dùng ${bio.short}`;
-            setTimeout(() => input && input.focus(), 100);
-          } else {
-            pwForm.style.display = 'none';
-            if (bioButton) bioButton.style.display = '';
-            toggleBtn.textContent = '🔑 Dùng mật khẩu';
-          }
-        } else {
-          // Đang xem pw → trigger biometric
-          this._triggerBiometric();
-        }
+        const pwForm  = document.getElementById('auth-form');
+        const bioBtnEl = document.getElementById('auth-bio-btn');
+        const isHidden = pwForm.style.display === 'none';
+        pwForm.style.display   = isHidden ? '' : 'none';
+        if (bioBtnEl) bioBtnEl.style.display = isHidden ? 'none' : '';
+        toggleBtn.textContent = isHidden ? `${bio.icon} Dùng ${bio.short}` : '🔑 Dùng mật khẩu thay thế';
+        if (isHidden && input) setTimeout(() => input.focus(), 100);
+      });
+    }
+
+    // Setup link (bật biometric từ màn hình đăng nhập)
+    if (setupLink) {
+      setupLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        // Phải đăng nhập mật khẩu trước
+        if (form) form.style.display = '';
+        setupLink.closest('.bio-available-hint').style.display = 'none';
+        if (input) setTimeout(() => input.focus(), 100);
+        // Mark intent to setup biometric after login
+        sessionStorage.setItem('mc_intent_setup_bio', '1');
       });
     }
   },
 
-  // ── Trigger biometric xác thực ──
-  async _triggerBiometric() {
+  // ── Trigger biometric ──
+  async _triggerBiometric(bio) {
+    bio = bio || this.getBiometricLabel();
     const bioBtn = document.getElementById('auth-bio-btn');
     const errEl  = document.getElementById('auth-error');
-    const bio    = this.getBiometricLabel();
 
     if (bioBtn) {
       bioBtn.classList.add('bio-btn--loading');
@@ -384,15 +390,15 @@ const AuthSystem = {
     try {
       const ok = await this.authenticateBiometric();
       if (ok) {
-        this.saveSession(true); // Luôn remember khi dùng biometric
+        this.saveSession(false); // session ngắn (đến khi đóng tab)
         if (bioBtn) {
           bioBtn.classList.remove('bio-btn--loading');
           bioBtn.classList.add('bio-btn--success');
           bioBtn.querySelector('.bio-main-label').textContent = '✅ Xác thực thành công!';
         }
-        setTimeout(() => this.showApp(), 600);
+        setTimeout(() => this.showApp(), 500);
       } else {
-        this._bioFailed(bioBtn, bio, errEl, 'Xác thực không thành công. Thử lại hoặc dùng mật khẩu.');
+        this._bioFailed(bioBtn, bio, errEl, 'Không xác thực được. Thử lại hoặc dùng mật khẩu.');
       }
     } catch {
       this._bioFailed(bioBtn, bio, errEl, 'Xác thực bị hủy.');
@@ -404,9 +410,12 @@ const AuthSystem = {
       bioBtn.classList.remove('bio-btn--loading');
       bioBtn.disabled = false;
       bioBtn.querySelector('.bio-main-label').textContent = `Mở khóa bằng ${bio.label}`;
-      bioBtn.querySelector('.bio-main-hint').textContent  = 'Chạm để xác thực';
+      bioBtn.querySelector('.bio-main-hint').textContent  = 'Chạm để thử lại';
     }
     if (errEl) { errEl.textContent = `⚠️ ${msg}`; errEl.style.display = 'block'; }
+    // Hiện form mật khẩu tự động
+    const pwForm = document.getElementById('auth-form');
+    if (pwForm) pwForm.style.display = '';
   },
 
   // ── Submit mật khẩu ──
@@ -422,15 +431,19 @@ const AuthSystem = {
     if (ok) {
       const shouldRemember = remember ? remember.checked : false;
       this.saveSession(shouldRemember);
+
       if (btn) {
         btn.textContent = '✅ Thành công!';
         btn.style.background = 'linear-gradient(135deg,#4ade80,#059669)';
       }
 
-      // Sau khi đăng nhập mật khẩu OK → hỏi có muốn bật sinh trắc học không
-      const bioAvailable = await this.isBiometricAvailable();
-      const bioEnrolled  = this.hasBiometricEnrolled();
-      if (bioAvailable && !bioEnrolled) {
+      // Kiểm tra nên hỏi setup biometric không
+      const bioAvailable   = await this.isBiometricAvailable();
+      const bioEnrolled    = this.hasBiometricEnrolled();
+      const intentSetupBio = sessionStorage.getItem('mc_intent_setup_bio') === '1';
+
+      if (bioAvailable && (!bioEnrolled || intentSetupBio)) {
+        sessionStorage.removeItem('mc_intent_setup_bio');
         setTimeout(() => this._offerBiometricSetup(), 700);
       } else {
         setTimeout(() => this.showApp(), 600);
@@ -442,7 +455,7 @@ const AuthSystem = {
     }
   },
 
-  // ── Hỏi có muốn bật biometric sau đăng nhập thành công ──
+  // ── Hỏi bật biometric ──
   async _offerBiometricSetup() {
     const bio = this.getBiometricLabel();
     const overlay = document.createElement('div');
@@ -452,12 +465,12 @@ const AuthSystem = {
         <div class="bio-setup-icon">${bio.icon}</div>
         <h3 class="bio-setup-title">Bật ${bio.label}?</h3>
         <p class="bio-setup-desc">
-          Lần sau bạn có thể mở khóa bằng ${bio.label} — nhanh hơn, không cần nhớ mật khẩu.
+          Lần sau mở app sẽ tự động yêu cầu xác thực ${bio.label} — bảo mật hơn, không cần nhập mật khẩu.
         </p>
         <button class="bio-setup-btn" id="bio-setup-yes">
-          ✅ Bật ${bio.short}
+          ✅ Bật ${bio.short} ngay
         </button>
-        <button class="bio-setup-skip" id="bio-setup-skip">Bỏ qua</button>
+        <button class="bio-setup-skip" id="bio-setup-skip">Không, để sau</button>
       </div>
     `;
     document.body.appendChild(overlay);
@@ -469,13 +482,14 @@ const AuthSystem = {
       yesBtn.disabled = true;
 
       const success = await this.registerBiometric();
-      overlay.remove();
-
       if (success) {
-        this._toast(`✅ ${bio.label} đã được bật thành công!`);
+        // Tự động bật "yêu cầu mỗi lần"
+        this.setBiometricRequired(true);
+        this._toast(`✅ ${bio.label} đã được bật! Lần sau sẽ tự động yêu cầu.`);
       } else {
-        this._toast(`⚠️ Không thể bật ${bio.label}. Dùng mật khẩu như thường.`);
+        this._toast(`⚠️ Không thể bật ${bio.label}. Kiểm tra cài đặt thiết bị.`);
       }
+      overlay.remove();
       setTimeout(() => this.showApp(), 400);
     });
 
@@ -484,6 +498,155 @@ const AuthSystem = {
       this.showApp();
     });
   },
+
+  // ════════════════════════════════════════
+  //  SETTINGS PANEL (gọi từ app.js)
+  // ════════════════════════════════════════
+
+  async renderSettingsPanel() {
+    const bioAvailable = await this.isBiometricAvailable();
+    const bioEnrolled  = this.hasBiometricEnrolled();
+    const bioRequired  = this.isBiometricRequired();
+    const bio          = this.getBiometricLabel();
+
+    return `
+      <!-- PHIÊN ĐĂNG NHẬP -->
+      <div class="settings-section-title">Phiên đăng nhập</div>
+      <div class="settings-item">
+        <span>✅ Đã xác thực</span>
+        <span class="settings-badge settings-badge--green">Đang hoạt động</span>
+      </div>
+
+      <!-- SINH TRẮC HỌC -->
+      <div class="settings-section-title" style="margin-top:16px">${bio.icon} ${bio.label}</div>
+
+      ${!bioAvailable ? `
+        <div class="settings-item settings-item--muted">
+          <span>⚠️ Thiết bị không hỗ trợ sinh trắc học</span>
+        </div>
+      ` : bioEnrolled ? `
+        <div class="settings-item">
+          <span>Trạng thái</span>
+          <span class="settings-badge settings-badge--green">✅ Đã đăng ký</span>
+        </div>
+
+        <div class="settings-item settings-toggle-row">
+          <div>
+            <div class="settings-toggle-label">Yêu cầu ${bio.short} mỗi lần mở</div>
+            <div class="settings-toggle-sub">Bảo mật cao hơn — luôn xác thực khi mở app</div>
+          </div>
+          <label class="settings-switch">
+            <input type="checkbox" id="bio-require-toggle" ${bioRequired ? 'checked' : ''}/>
+            <span class="settings-switch-slider"></span>
+          </label>
+        </div>
+
+        <button class="settings-btn settings-btn--test" id="bio-test-btn">
+          ${bio.icon} Thử xác thực ngay
+        </button>
+
+        <button class="settings-btn settings-btn--danger" id="bio-remove-btn">
+          🗑️ Xóa ${bio.short} đã đăng ký
+        </button>
+      ` : `
+        <div class="settings-item settings-item--muted">
+          <span>Chưa đăng ký ${bio.label}</span>
+          <span class="settings-badge">Chưa bật</span>
+        </div>
+        <button class="settings-btn settings-btn--primary" id="bio-setup-btn">
+          ${bio.icon} Bật ${bio.label} ngay
+        </button>
+      `}
+
+      <!-- ĐĂNG XUẤT -->
+      <div class="settings-section-title" style="margin-top:16px">Tài khoản</div>
+      <button class="settings-btn settings-btn--danger" id="settings-logout-btn">
+        🔒 Đăng xuất
+      </button>
+
+      <div class="settings-footer">
+        MenControl Pro · Bảo vệ bởi SHA-256 + WebAuthn<br>
+        Dữ liệu lưu trên thiết bị của bạn
+      </div>
+    `;
+  },
+
+  // Bind events trong settings panel
+  async bindSettingsEvents(bio) {
+    bio = bio || this.getBiometricLabel();
+
+    // Toggle "yêu cầu mỗi lần"
+    const toggle = document.getElementById('bio-require-toggle');
+    if (toggle) {
+      toggle.addEventListener('change', () => {
+        this.setBiometricRequired(toggle.checked);
+        this._toast(toggle.checked
+          ? `✅ Sẽ yêu cầu ${bio.short} mỗi lần mở app`
+          : `ℹ️ Đã tắt yêu cầu ${bio.short} bắt buộc`);
+      });
+    }
+
+    // Test biometric
+    const testBtn = document.getElementById('bio-test-btn');
+    if (testBtn) {
+      testBtn.addEventListener('click', async () => {
+        testBtn.disabled = true;
+        testBtn.textContent = '⏳ Đang xác thực...';
+        const ok = await this.authenticateBiometric();
+        testBtn.disabled = false;
+        testBtn.textContent = `${bio.icon} Thử xác thực ngay`;
+        this._toast(ok ? `✅ ${bio.label} hoạt động tốt!` : `❌ Xác thực không thành công`);
+      });
+    }
+
+    // Remove biometric
+    const removeBtn = document.getElementById('bio-remove-btn');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        if (confirm(`Xóa ${bio.label} đã đăng ký?\nBạn sẽ cần dùng mật khẩu để đăng nhập.`)) {
+          this.removeBiometric();
+          this._toast(`🗑️ Đã xóa ${bio.label}`);
+          // Re-render settings
+          document.getElementById('settings-overlay') &&
+            document.getElementById('settings-overlay').remove();
+          if (typeof App !== 'undefined') App.showSettings();
+        }
+      });
+    }
+
+    // Setup biometric
+    const setupBtn = document.getElementById('bio-setup-btn');
+    if (setupBtn) {
+      setupBtn.addEventListener('click', async () => {
+        setupBtn.disabled = true;
+        setupBtn.textContent = '⏳ Đang đăng ký...';
+        const ok = await this.registerBiometric();
+        if (ok) {
+          this.setBiometricRequired(true);
+          this._toast(`✅ ${bio.label} đã được bật thành công!`);
+          document.getElementById('settings-overlay') &&
+            document.getElementById('settings-overlay').remove();
+          if (typeof App !== 'undefined') App.showSettings();
+        } else {
+          setupBtn.disabled = false;
+          setupBtn.textContent = `${bio.icon} Bật ${bio.label} ngay`;
+          this._toast(`❌ Không thể đăng ký. Kiểm tra cài đặt thiết bị.`);
+        }
+      });
+    }
+
+    // Logout
+    const logoutBtn = document.getElementById('settings-logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        if (confirm('Bạn có chắc muốn đăng xuất?')) this.logout();
+      });
+    }
+  },
+
+  // ════════════════════════════════════════
+  //  HELPERS
+  // ════════════════════════════════════════
 
   _toast(msg) {
     const t = document.createElement('div');
@@ -501,10 +664,7 @@ const AuthSystem = {
     }
   },
 
-  // Backward compat
-  async handleSubmit(input, remember, btn, errEl) {
-    return this._submitPassword(input, remember, btn, errEl);
-  },
-
-  shakeInput(input, errEl, msg) { return this._shake(input, errEl, msg); }
+  // backward compat
+  async handleSubmit(i, r, b, e) { return this._submitPassword(i, r, b, e); },
+  shakeInput(i, e, m)             { return this._shake(i, e, m); }
 };

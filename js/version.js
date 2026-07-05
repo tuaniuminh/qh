@@ -9,13 +9,25 @@
 // ============================================================
 
 const AppVersion = {
-  VERSION:      '1.0.6',
+  VERSION:      '1.0.7',
   BUILD_DATE:   '2026-07-05',
   CODENAME:     'PRO',
   CACHE_KEY:    'mc_version_seen',
 
   // Lịch sử cập nhật
   CHANGELOG: [
+    {
+      version:  '1.0.7',
+      date:     '2026-07-05',
+      type:     'update',
+      changes: [
+        '🔒 Yêu cầu Face ID mỗi lần mở app (có thể bật/tắt)',
+        '⚙️ Quản lý Face ID trong màn hình Cài đặt: bật, tắt, thử, xóa',
+        '🎨 Cài đặt được thiết kế lại toàn bộ với toggle switch',
+        '🔄 Tự hiện form mật khẩu khi Face ID thất bại',
+        '💡 Gợi ý bật Face ID ngay trên màn hình đăng nhập'
+      ]
+    },
     {
       version:  '1.0.6',
       date:     '2026-07-05',

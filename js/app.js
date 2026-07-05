@@ -1601,71 +1601,45 @@ const App = {
     `;
   },
 
-  showSettings() {
-    // Create settings overlay
+  async showSettings() {
+    // Xóa overlay cũ nếu có
+    const existing = document.getElementById('settings-overlay');
+    if (existing) existing.remove();
+
     const overlay = document.createElement('div');
     overlay.id = 'settings-overlay';
     overlay.style.cssText = `
       position:fixed;inset:0;z-index:9000;
-      background:rgba(6,6,18,0.85);
-      backdrop-filter:blur(12px);
+      background:rgba(6,6,18,0.88);
+      backdrop-filter:blur(16px);
       display:flex;align-items:center;justify-content:center;
       padding:24px;
       animation:fade-up 0.2s ease;
     `;
+
+    // Render nội dung từ AuthSystem
+    const panelHTML = await AuthSystem.renderSettingsPanel();
+
     overlay.innerHTML = `
-      <div style="
-        background:rgba(26,26,53,0.95);
-        border:1px solid rgba(108,99,255,0.25);
-        border-radius:24px;
-        padding:32px;
-        width:100%;max-width:360px;
-        box-shadow:0 24px 64px rgba(0,0,0,0.6);
-      ">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-          <h2 style="font-size:18px;font-weight:800;color:#f0f0ff">⚙️ Cài đặt</h2>
-          <button onclick="document.getElementById('settings-overlay').remove()" style="
-            background:rgba(255,255,255,0.06);border:none;border-radius:8px;
-            padding:8px 12px;color:rgba(240,240,255,0.5);cursor:pointer;font-size:16px;
-          ">✕</button>
+      <div class="settings-panel">
+        <div class="settings-panel-header">
+          <h2>⚙️ Cài đặt</h2>
+          <button class="settings-close-btn" id="settings-close-btn">✕</button>
         </div>
-
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="
-            padding:14px;background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08);border-radius:12px;
-          ">
-            <div style="font-size:11px;font-weight:700;color:rgba(240,240,255,0.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Phiên đăng nhập</div>
-            <div style="font-size:13px;color:rgba(240,240,255,0.7)">✅ Đã xác thực · Phiên đang hoạt động</div>
-          </div>
-
-          <button onclick="if(confirm('Bạn có chắc muốn đăng xuất?')){AuthSystem.logout();}" style="
-            width:100%;padding:14px;
-            background:rgba(239,68,68,0.1);
-            border:1px solid rgba(239,68,68,0.25);
-            border-radius:12px;
-            font-family:inherit;font-size:14px;font-weight:700;
-            color:#f87171;cursor:pointer;
-            transition:all 0.2s;
-            display:flex;align-items:center;justify-content:center;gap:8px;
-          " onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
-            🔒 Đăng xuất
-          </button>
-
-          <div style="
-            font-size:11px;color:rgba(240,240,255,0.25);
-            text-align:center;padding-top:8px;line-height:1.6;
-          ">
-            MenControl Pro · Bảo vệ bởi SHA-256<br>
-            Dữ liệu lưu trên thiết bị của bạn
-          </div>
+        <div class="settings-panel-body">
+          ${panelHTML}
         </div>
       </div>
     `;
+
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) overlay.remove();
-    });
+
+    // Bind close
+    document.getElementById('settings-close-btn').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    // Bind AuthSystem events
+    await AuthSystem.bindSettingsEvents();
   }
 };
 
