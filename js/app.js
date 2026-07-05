@@ -391,6 +391,354 @@ const App = {
           </div>
         </div>
       `
+    },
+    {
+      id: 'combat-guide',
+      title: 'Thực chiến toàn trình',
+      icon: '⚔️',
+      color: '#f43f5e',
+      readTime: '10 phút',
+      content: `
+        <div class="theory-section">
+          <div class="theory-hero" style="background: linear-gradient(135deg, #1a0010, #4a0020, #7f1d1d)">
+            <div class="theory-hero-icon">⚔️</div>
+            <h2>Hướng dẫn thực chiến toàn trình</h2>
+            <p class="theory-subtitle">Từng bước — từng giai đoạn — từng kỹ thuật trong buổi quan hệ thực tế</p>
+          </div>
+
+          <!-- TỔNG QUAN -->
+          <div class="theory-card highlight-card">
+            <h3>🗺️ Bản đồ toàn buổi</h3>
+            <p>Một buổi quan hệ được chia thành <strong>5 giai đoạn chính</strong>. Hiểu rõ từng giai đoạn giúp bạn luôn chủ động và không bị cuốn theo bản năng.</p>
+            <div class="combat-roadmap">
+              <div class="roadmap-item">
+                <span class="roadmap-num">1</span>
+                <span class="roadmap-name">Chuẩn bị tâm lý & thể chất</span>
+                <span class="roadmap-time">Trước quan hệ</span>
+              </div>
+              <div class="roadmap-arrow">↓</div>
+              <div class="roadmap-item">
+                <span class="roadmap-num">2</span>
+                <span class="roadmap-name">Giai đoạn tiền희 (Foreplay)</span>
+                <span class="roadmap-time">10–20 phút</span>
+              </div>
+              <div class="roadmap-arrow">↓</div>
+              <div class="roadmap-item">
+                <span class="roadmap-num">3</span>
+                <span class="roadmap-name">Giao hợp — Vùng kiểm soát (0–6/10)</span>
+                <span class="roadmap-time">Tùy kiểm soát</span>
+              </div>
+              <div class="roadmap-arrow">↓</div>
+              <div class="roadmap-item roadmap-item--danger">
+                <span class="roadmap-num">4</span>
+                <span class="roadmap-name">⚠️ Vùng ngưỡng (6–8/10) — Quyết định thành bại</span>
+                <span class="roadmap-time">30–60 giây</span>
+              </div>
+              <div class="roadmap-arrow">↓</div>
+              <div class="roadmap-item">
+                <span class="roadmap-num">5</span>
+                <span class="roadmap-name">Hồi phục & chu kỳ mới / Kết thúc có kiểm soát</span>
+                <span class="roadmap-time">Lặp lại 2–5 lần</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- GIAI ĐOẠN 1: CHUẨN BỊ -->
+          <div class="theory-card">
+            <h3>🧘 Giai đoạn 1: Chuẩn bị (Trước quan hệ)</h3>
+            <p>50% thành công được quyết định <strong>trước khi bắt đầu</strong>. Tâm trí lo lắng = cơ PC căng sớm = mất kiểm soát nhanh hơn.</p>
+
+            <div class="step-guide">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Thở bụng 5 lần sâu:</strong> Hít vào 4s → giữ 2s → thở ra 6s. Kích hoạt hệ thần kinh phó giao cảm (chế độ thư giãn). Làm ngay trước khi bắt đầu.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Thả lỏng cơ toàn thân:</strong> Kiểm tra vai → thả. Kiểm tra hàm → thả. Kiểm tra cơ PC → thả hoàn toàn. Cơ PC căng sẵn sẽ khiến bạn đạt ngưỡng nhanh hơn 2–3 lần.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Đặt mục tiêu nhỏ:</strong> Không đặt mục tiêu "phải kéo dài X phút". Thay vào đó: "Tôi sẽ chú ý nhận biết mức hưng phấn và kiểm soát ít nhất 1 lần tại ngưỡng 7/10."
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Không lo lắng về kết quả:</strong> Lo lắng là kẻ thù số 1. Lo lắng → căng thẳng → adrenaline → mất kiểm soát nhanh hơn. Hãy xem đây là buổi "thực hành có hướng dẫn".
+                </div>
+              </div>
+            </div>
+            <div class="theory-note" style="margin-top:12px">
+              ⚠️ <strong>Lưu ý:</strong> Nếu vừa thủ dâm gần đây (trong vòng 3–6 tiếng), cơ thể đang ở "refractory period" — sẽ khó kiểm soát hơn. Lên lịch hợp lý.
+            </div>
+          </div>
+
+          <!-- GIAI ĐOẠN 2: TIỀN희 -->
+          <div class="theory-card">
+            <h3>💑 Giai đoạn 2: Tiền戏 — Foreplay (10–20 phút)</h3>
+            <p>Foreplay <strong>không phải chờ đợi</strong> — đây là giai đoạn bạn xây dựng hưng phấn cho đối tác đồng thời <strong>kiểm tra và kiểm soát hưng phấn của mình</strong> trước khi vào giao hợp chính.</p>
+
+            <div class="step-guide">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Hưng phấn mục tiêu của BẠN: 2–3/10</strong><br>
+                  Duy trì cơ PC thả lỏng. Nếu hưng phấn của bạn đã lên 4–5/10 trong foreplay, hãy điều tiết bằng cách tập trung hoàn toàn vào đối tác (chứ không phải cảm giác của mình).
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Thở bụng xuyên suốt:</strong> Không nín thở. Hơi thở nông = hưng phấn tăng nhanh không kiểm soát được. Mỗi khi nhận ra mình nín thở, thở ra từ từ ngay lập tức.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Hôn và tiếp xúc ngoài da:</strong> Cổ, tai, vai, lưng của đối tác. Các vùng này kích thích đối tác mà không gây nhiều kích thích trực tiếp cho bạn → kiểm soát được.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Kegel nhẹ 3–5 lần:</strong> Siết 2 giây → thả 5 giây. Để "đánh thức" cơ PC và kiểm tra nó đang phản ứng ra sao. Nếu cơ PC đang tự siết → bạn đang căng thẳng → thả lỏng vai và hàm.
+                </div>
+              </div>
+            </div>
+            <div class="theory-note" style="margin-top:12px">
+              💡 <strong>Mẹo chuyên gia:</strong> Làm đối tác hưng phấn cao (6–7/10) TRƯỚC khi bắt đầu giao hợp. Khi đối tác đã hưng phấn cao, bạn có thể "dừng" ngắn mà không ảnh hưởng nhiều đến họ.
+            </div>
+          </div>
+
+          <!-- GIAI ĐOẠN 3: GIAO HỢP VÙNG AN TOÀN -->
+          <div class="theory-card">
+            <h3>🎯 Giai đoạn 3: Giao hợp — Vùng kiểm soát (Hưng phấn 0–6/10)</h3>
+            <p>Đây là giai đoạn bạn <strong>chủ động điều tiết</strong>. Không có "đúng/sai" về tốc độ hay tư thế — chỉ cần luôn biết mình đang ở mức nào.</p>
+
+            <div class="step-guide">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Nhịp di chuyển — Kỹ thuật 9-1:</strong><br>
+                  9 cú di chuyển <em>nông</em> (1/3 độ sâu) + 1 cú <em>sâu</em> hoàn toàn. Lặp lại. Cú nông ít kích thích hơn cú sâu khoảng 60% → tốc độ giảm hưng phấn tự nhiên mà đối tác vẫn cảm nhận tốt.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Cơ PC ở mức 3–5/10:</strong> Kegel nhẹ (<em>siết 2–3s → thả 5s</em>). Không siết liên tục — siết liên tục làm cơ mệt và mất phản ứng khi cần dùng khẩn cấp.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Tư thế ảnh hưởng đến tốc độ hưng phấn:</strong>
+                  <ul style="margin:6px 0 0 0;padding-left:16px;font-size:13px;color:rgba(240,240,255,0.7)">
+                    <li>Bạn ở trên (missionary): hưng phấn tăng chậm → dễ kiểm soát nhất ✅</li>
+                    <li>Đối tác ở trên (cowgirl): hưng phấn tăng nhanh → cần theo dõi sát ⚠️</li>
+                    <li>Đứng sau (doggy): hưng phấn tăng rất nhanh → cần Kegel mạnh hơn 🔴</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Thở đồng bộ:</strong> Thở ra khi di chuyển vào, hít vào khi rút ra. Nhịp thở chủ động này giúp não tập trung và giảm hưng phấn tự nhiên 15–20%.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">5</div>
+                <div>
+                  <strong>Luôn đếm mức hưng phấn:</strong> Cứ 30 giây hỏi bản thân "Mình đang ở mức mấy?". Nếu câu trả lời là 5.5 → bắt đầu chuẩn bị cho ngưỡng. Nếu câu trả lời là 3 → an toàn, tiếp tục.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GIAI ĐOẠN 4: NGƯỠNG NGUY HIỂM -->
+          <div class="theory-card warning-card">
+            <h3>🚨 Giai đoạn 4: Vùng ngưỡng (6–8/10) — Giai đoạn QUYẾT ĐỊNH</h3>
+            <p>Đây là 30–60 giây quan trọng nhất. Thực hiện đúng = kiểm soát thành công. Thực hiện sai = mất kiểm soát. <strong>Không có trung gian.</strong></p>
+
+            <div class="step-guide">
+              <div class="step-item" style="border-left:3px solid #f59e0b">
+                <div class="step-num" style="background:#f59e0b">A</div>
+                <div>
+                  <strong>6/10 — Giai đoạn cảnh báo sớm:</strong><br>
+                  Dấu hiệu: Nhịp thở tự nhiên nhanh lên, cơ thắt lưng căng, tập trung vào cảm giác tăng lên.<br>
+                  <em>Hành động:</em> Giảm nhịp ngay (không cần dừng hẳn), tăng Kegel vừa (siết 4–5s → thả 8s), thở sâu chủ động.
+                </div>
+              </div>
+              <div class="step-item" style="border-left:3px solid #ef4444">
+                <div class="step-num" style="background:#ef4444">B</div>
+                <div>
+                  <strong>7/10 — NGƯỠNG HÀNH ĐỘNG NGAY:</strong><br>
+                  <em>Ngay lập tức:</em>
+                  <ol style="margin:6px 0 0 0;padding-left:16px;font-size:13px;color:rgba(240,240,255,0.8)">
+                    <li><strong>DỪNG di chuyển hoàn toàn</strong> (không thương lượng)</li>
+                    <li><strong>Siết PC mạnh nhất có thể</strong> — như đang nín tiểu khẩn cấp</li>
+                    <li><strong>Giữ siết 5–8 giây</strong> — đếm trong đầu: 1...2...3...4...5</li>
+                    <li><strong>Thở ra từ từ</strong> trong khi siết (KHÔNG nín thở)</li>
+                    <li><strong>Chuyển cầu</strong> sang hôn/vuốt ve đối tác</li>
+                  </ol>
+                </div>
+              </div>
+              <div class="step-item" style="border-left:3px solid #dc2626">
+                <div class="step-num" style="background:#dc2626">C</div>
+                <div>
+                  <strong>8/10 — Dùng Reverse Kegel khẩn cấp:</strong><br>
+                  Nếu bỏ lỡ ngưỡng 7/10 và đã lên 8:<br>
+                  <em>Hành động:</em> DỪNG hoàn toàn + Thở bụng sâu + "Đẩy nhẹ xuống" (Reverse Kegel) 5–8 lần liên tiếp + Nghĩ về điều gì đó không liên quan (giảm hưng phấn tâm lý).
+                </div>
+              </div>
+            </div>
+
+            <div class="theory-note" style="margin-top:14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:12px">
+              🚫 <strong>Tuyệt đối KHÔNG làm khi ở ngưỡng 7–8/10:</strong><br>
+              ❌ Tiếp tục di chuyển "thêm một chút"<br>
+              ❌ Nín thở hoặc rặn<br>
+              ❌ Siết cơ mông hoặc bụng<br>
+              ❌ Hoảng loạn (hoảng loạn = adrenaline = hưng phấn tăng vọt)
+            </div>
+          </div>
+
+          <!-- CHĂM SÓC ĐỐI TÁC KHI DỪNG -->
+          <div class="theory-card">
+            <h3>💑 Trong lúc dừng: Chăm sóc đối tác (30–60 giây)</h3>
+            <p>Khi dừng để kiểm soát, đối tác không được biết bạn đang "cấp cứu hưng phấn". Hãy chuyển sang <strong>một hoạt động khác mượt mà</strong>:</p>
+
+            <div class="step-guide">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Hôn sâu đột ngột:</strong> Nhổm lên hôn mãnh liệt ngay lúc dừng. Đối tác hiểu là bạn đang "tăng cảm xúc" chứ không phải dừng. Giúp bạn thở lại bình thường trong khi siết PC.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Vuốt ve có chủ đích:</strong> Lưng, mông, đùi trong của đối tác. Giữ họ hưng phấn và tập trung vào cảm giác của họ — không phải của bạn. Khi bạn cho đi, hưng phấn của bạn tự giảm.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Thì thầm vào tai:</strong> Nói điều gì đó gợi cảm, hỏi cảm giác của họ. Giọng nói thấp tạo kết nối cảm xúc sâu và giữ không khí không bị "tắt lạnh". Không cần nói nhiều — 1 câu là đủ.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Kích thích bằng tay / miệng:</strong> Trong 30–60 giây chờ hưng phấn hạ, chủ động đưa họ lên cao hơn. Khi quay lại giao hợp, đối tác đang hưng phấn cao hơn → họ gần kết thúc nhanh hơn → bạn có lợi thế.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">5</div>
+                <div>
+                  <strong>Đề nghị đổi tư thế:</strong> "Anh muốn thử tư thế khác" → vừa giải thích tự nhiên cho việc dừng, vừa tạo sự hứng khởi mới, vừa cho bạn thêm 10–15 giây di chuyển chậm lúc "chuyển tư thế".
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GIAI ĐOẠN 5: HỒI PHỤC -->
+          <div class="theory-card">
+            <h3>🔄 Giai đoạn 5: Hồi phục & Chu kỳ mới</h3>
+            <p>Sau khi kiểm soát thành công tại ngưỡng, hưng phấn hạ về <strong>3–5/10</strong>. Lúc này bắt đầu chu kỳ mới. Mỗi chu kỳ thành công = kinh nghiệm não ghi nhớ = lần sau dễ hơn.</p>
+
+            <div class="step-guide">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Reverse Kegel 5–8 lần:</strong> Ngay sau khi thả cơ PC, áp dụng Reverse Kegel để đẩy hưng phấn xuống tích cực hơn. Thở bụng + đẩy nhẹ xuống 3–5 giây × 5–8 lần.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Chờ hưng phấn về 4/10:</strong> Cảm nhận cơ PC đang thả lỏng dần, nhịp tim chậm lại, thở trở lại bình thường. Đây là tín hiệu an toàn để tiếp tục.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Bắt đầu lại nhẹ nhàng:</strong> Nhịp chậm, độ nông, cơ PC thả lỏng hoàn toàn. Không "cố gắng bù" bằng cách di chuyển mạnh hơn sau khi nghỉ — làm vậy sẽ đạt ngưỡng nhanh hơn lần trước.
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Mục tiêu: 2–5 chu kỳ kiểm soát:</strong> Mỗi buổi kiểm soát được ≥ 2 lần tại ngưỡng = buổi tập thành công. Khi đạt được 5 chu kỳ ổn định → xuất tinh sớm đã được kiểm soát hoàn toàn.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BẢNG TÓM TẮT NHANH -->
+          <div class="theory-card highlight-card">
+            <h3>⚡ Bảng tham chiếu nhanh — In vào đầu</h3>
+            <div class="combat-table">
+              <div class="combat-row combat-row--header">
+                <span>Mức HP</span>
+                <span>Cơ PC</span>
+                <span>Hành động</span>
+              </div>
+              <div class="combat-row">
+                <span>🟢 0–3</span>
+                <span>Thả lỏng</span>
+                <span>Di chuyển bình thường, thở đều</span>
+              </div>
+              <div class="combat-row">
+                <span>🟡 3–5</span>
+                <span>Kegel nhẹ</span>
+                <span>Siết 2s → thả 5s, giảm nhịp nhẹ</span>
+              </div>
+              <div class="combat-row">
+                <span>🟠 5–6</span>
+                <span>Kegel vừa</span>
+                <span>Siết 4s → thả 8s, thở sâu hơn</span>
+              </div>
+              <div class="combat-row combat-row--danger">
+                <span>🔴 7/10</span>
+                <span>SIẾT MẠNH</span>
+                <span>DỪNG + Siết 5–8s + Chuyển cầu</span>
+              </div>
+              <div class="combat-row combat-row--critical">
+                <span>💀 8+</span>
+                <span>Reverse K.</span>
+                <span>DỪNG + Đẩy nhẹ xuống × 8 lần</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- DẤU HIỆU TIẾN BỘ -->
+          <div class="theory-card">
+            <h3>📈 Dấu hiệu bạn đang tiến bộ</h3>
+            <ul class="theory-list">
+              <li><span class="list-icon">✅</span><div>Nhận ra được mức hưng phấn của mình trong thực tế (tuần 1–2)</div></li>
+              <li><span class="list-icon">✅</span><div>Kiểm soát được ít nhất 1 lần tại ngưỡng 7/10 trong một buổi (tuần 3–4)</div></li>
+              <li><span class="list-icon">✅</span><div>Dừng được mà không bị mất kiểm soát hoàn toàn (tuần 4–6)</div></li>
+              <li><span class="list-icon">✅</span><div>Kiểm soát được 2–3 chu kỳ liên tiếp (tuần 6–8)</div></li>
+              <li><span class="list-icon">🏆</span><div>Kiểm soát chủ động TRƯỚC ngưỡng, không cần "cấp cứu" (tháng 2–3)</div></li>
+            </ul>
+          </div>
+
+          <!-- LỜI NHẮC CUỐI -->
+          <div class="theory-card" style="border-color:rgba(108,99,255,0.3);background:rgba(108,99,255,0.06)">
+            <h3>💜 Nhớ luôn</h3>
+            <p style="font-size:15px;line-height:1.7;color:rgba(240,240,255,0.8)">
+              Xuất tinh sớm <strong>không phải lỗi của bạn</strong> — đó là phản xạ chưa được luyện tập. Não bộ học cực kỳ nhanh khi được luyện đúng cách. Mỗi buổi thực hành, dù thành công hay thất bại, đều đang ghi thêm "dữ liệu" cho não. Sau 8–12 tuần kiên trì, cơ thể bạn <em>tự động</em> kiểm soát tốt hơn ngay cả khi bạn không cố.
+            </p>
+            <p class="theory-note">🎯 Kiên trì > Hoàn hảo. Thực hành > Lý thuyết.</p>
+          </div>
+        </div>
+      `
     }
   ],
 

@@ -9,13 +9,25 @@
 // ============================================================
 
 const AppVersion = {
-  VERSION:      '1.0.4',
-  BUILD_DATE:   '2026-07-01',
+  VERSION:      '1.0.5',
+  BUILD_DATE:   '2026-07-05',
   CODENAME:     'PRO',
   CACHE_KEY:    'mc_version_seen',
 
   // Lịch sử cập nhật
   CHANGELOG: [
+    {
+      version:  '1.0.5',
+      date:     '2026-07-05',
+      type:     'update',
+      changes: [
+        '⚔️ Thêm module Lý thuyết Thực chiến toàn trình (5 giai đoạn chi tiết)',
+        '🗺️ Bản đồ toàn buổi quan hệ với thời gian từng giai đoạn',
+        '📊 Bảng tham chiếu nhanh HP → Cơ PC → Hành động',
+        '🚨 Hướng dẫn chi tiết vùng ngưỡng 6-7-8/10',
+        '👑 Kỹ thuật 9-1, thở đồng bộ, đổi tư thế, chăm sóc đối tác'
+      ]
+    },
     {
       version:  '1.0.4',
       date:     '2026-07-01',
